@@ -1,0 +1,37 @@
+Sub ProcessData()
+    
+    Dim lastRow As Long
+    Dim ws As Worksheet
+    Dim rng As Range
+    
+    ' Change Sheet1 to the name of your worksheet
+    Set ws = ThisWorkbook.Worksheets("Sheet1")
+    
+    ' Find the last row of data in column E
+    lastRow = ws.Cells(ws.Rows.Count, "E").End(xlUp).Row
+    
+    ' Convert text to number for the entire E column
+    ws.Range("E1:E" & lastRow).Value = ws.Range("E1:E" & lastRow).Value
+    
+    ' Remove the last 5 rows
+    Set rng = ws.Range("E" & lastRow - 4 & ":E" & lastRow)
+    rng.Delete Shift:=xlUp
+    
+    ' Filter the data and combine it based on product
+    ws.Range("A1:E" & lastRow).AutoFilter Field:=5, Criteria1:="Product X"
+    ws.Range("A1:E" & lastRow).AutoFilter Field:=4, Criteria1:=">1/1/2023"
+    
+    ' Change the color of cells with products that are more than 60 days old
+    Dim cell As Range
+    For Each cell In ws.Range("E1:E" & lastRow)
+        If IsDate(cell.Value) Then
+            If DateDiff("d", cell.Value, Now) > 60 Then
+                cell.Interior.Color = RGB(255, 0, 0) ' change to red
+            End If
+        End If
+    Next cell
+    
+    ' Clear the filters
+    ws.AutoFilterMode = False
+    
+End Sub

@@ -1,0 +1,48 @@
+const workbookName = "MyWorkbook.xlsx";
+const sheetName = "Sheet1";
+const product = "Product X";
+const cutoffDate = new Date("2023-01-01");
+const daysToHighlight = 60;
+
+// Connect to Excel and open the workbook
+const excel = await Excel.run(async (context) => {
+    const workbook = await context.workbooks.open(workbookName);
+    const sheet = workbook.worksheets.getItem(sheetName);
+
+    // Convert text to number for the entire E column
+    const eColumn = sheet.getRange("E:E");
+    eColumn.numberFormat = 0; // number format
+    eColumn.values = eColumn.values;
+
+    // Remove the last 5 rows
+    const lastRow = sheet.getRange("E1").getEntireColumn().getUsedRange().getLastRow();
+    const last5Rows = sheet.getRange(lastRow - 4, 5, 5, 1);
+    last5Rows.delete(Excel.DeleteShiftDirection.up);
+
+    // Filter the data and combine it based on product
+    const dataRange = sheet.getRange("A:E").getUsedRange();
+    dataRange.autoFilter(5, product);
+    dataRange.autoFilter(4, ">=" + cutoffDate.toLocaleDateString());
+
+    // Change the color of cells with products that are more than 60 days old
+    const today = new Date();
+    const eValues = sheet.getRange("E:E").values;
+    eValues.forEach((row, i) => {
+        const cell = row[0];
+        if (cell && !isNaN(cell)) {
+            const dateValue = new Date(cell);
+            const daysDiff = Math.floor((today - dateValue) / (1000 * 60 * 60 * 24));
+            if (daysDiff > daysToHighlight) {
+                sheet.getCell(i + 1, 5).format.fill.color = "red";
+            }
+        }
+    });
+
+    // Clear the filters
+    dataRange.autoFilter(null);
+    return workbook;
+});
+
+// Save and close the workbook
+await excel.context.sync();
+excel.close();

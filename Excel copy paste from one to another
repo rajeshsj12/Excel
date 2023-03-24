@@ -1,0 +1,144 @@
+Copy Data from One Workbook to Another Using Excel Macros
+
+Workbooks("New Data.xlsx").Worksheets("Export").Range("A2:D9").Copy _
+    Workbooks("Reports.xlsm").Worksheets("Data").Range("A2")
+
+
+Sub OpenWorkbook()
+'Open a workbook
+
+  'Open method requires full file path to be referenced.
+  Workbooks.Open "C:\Users\username\Documents\New Data.xlsx"
+  
+  'Open method has additional parameters
+  'Workbooks.Open(FileName, UpdateLinks, ReadOnly, Format, Password, WriteResPassword, IgnoreReadOnlyRecommended, Origin, Delimiter, Editable, Notify, Converter, AddToMru, Local, CorruptLoad)
+  'Help page: https://docs.microsoft.com/en-us/office/vba/api/excel.workbooks.open
+
+End Sub
+
+
+Sub CloseWorkbook()
+'Close a workbook
+
+  Workbooks("New Data.xlsx").Close SaveChanges:=True
+  
+  'Close method has additional parameters
+  'Workbooks.Close(SaveChanges, Filename, RouteWorkbook)
+  'Help page: https://docs.microsoft.com/en-us/office/vba/api/excel.workbook.close
+  
+End Sub
+
+
+
+
+
+
+
+
+PasteSpecial Method to Paste Values, Formats, etc.
+
+
+
+  'Copy range to clipboard
+  Workbooks("New Data.xlsx").Worksheets("Export").Range("A2:D9").Copy
+  
+  'PasteSpecial to paste values, formulas, formats, etc.
+  Workbooks("Reports.xlsm").Worksheets("Data").Range("A2").PasteSpecial Paste:=xlPasteValues
+  
+
+
+
+
+
+
+
+Pasting Below the Last Cell
+
+
+Sub Copy_Paste_Below_Last_Cell()
+'Find the last used row in both sheets and copy and paste data below existing data.
+
+Dim wsCopy As Worksheet
+Dim wsDest As Worksheet
+Dim lCopyLastRow As Long
+Dim lDestLastRow As Long
+
+  'Set variables for copy and destination sheets
+  Set wsCopy = Workbooks("New Data.xlsx").Worksheets("Export 2")
+  Set wsDest = Workbooks("Reports.xlsm").Worksheets("All Data")
+    
+  '1. Find last used row in the copy range based on data in column A
+  lCopyLastRow = wsCopy.Cells(wsCopy.Rows.Count, "A").End(xlUp).Row
+    
+  '2. Find first blank row in the destination range based on data in column A
+  'Offset property moves down 1 row
+  lDestLastRow = wsDest.Cells(wsDest.Rows.Count, "A").End(xlUp).Offset(1).Row
+
+  '3. Copy & Paste Data
+  wsCopy.Range("A2:D" & lCopyLastRow).Copy _
+    wsDest.Range("A" & lDestLastRow)
+
+
+
+
+
+
+
+
+Clearing the Destination Range Before Pasting
+
+Sub Clear_Existing_Data_Before_Paste()
+
+Dim wsCopy As Worksheet
+Dim wsDest As Worksheet
+Dim lCopyLastRow As Long
+Dim lDestLastRow As Long
+
+  Set wsCopy = Workbooks("New Data.xlsx").Worksheets("Export 2")
+  Set wsDest = Workbooks("Reports.xlsm").Worksheets("All Data")
+    
+    '1. Find last used row in the copy range based on data in column A
+    lCopyLastRow = wsCopy.Cells(wsCopy.Rows.Count, "A").End(xlUp).Row
+      
+    '2. Find first blank row in the destination range based on data in column A
+    'Offset property moves down 1 row
+    lDestLastRow = wsDest.Cells(wsDest.Rows.Count, "A").End(xlUp).Offset(1).Row
+    
+    '3. Clear contents of existing data range
+    wsDest.Range("A2:D" & lDestLastRow).ClearContents
+
+    '4. Copy & Paste Data
+    wsCopy.Range("A2:D" & lCopyLastRow).Copy _
+      wsDest.Range("A2")
+
+End Sub
+
+
+
+
+
+
+
+
+
+
+
+
+
+Alternative Code for Copying Data to Your Current Workbook
+
+Workbooks("New Data.xlsx").Worksheets("Export").Range("A2:D9").Copy _
+    ThisWorkbook.Worksheets("Data").Range("A2")
+
+
+
+
+
+
+Copy Paste Between Sheets in Same Workbook
+
+  'Copy range to clipboard
+  Workbooks("New Data.xlsx").Worksheets("Export").Range("A2:D9").Copy
+  
+  'PasteSpecial to paste values, formulas, formats, etc.
+  Workbooks("New Data.xlsm").Worksheets("Data").Range("A2").PasteSpecial Paste:=xlPasteValues

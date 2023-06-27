@@ -1,0 +1,7 @@
+In this project, a material value stream demand forecast for a period of two years will be conducted using Python. The forecast will utilize two popular time series forecasting techniques: ARIMA (AutoRegressive Integrated Moving Average) and STL (Seasonal and Trend decomposition using Loess) decomposition. 
+
+ARIMA is a widely used model for time series forecasting that incorporates autoregressive, moving average, and differencing components to capture the patterns and trends in the data. It takes into account the historical demand patterns and uses them to predict future values.
+
+STL decomposition is a method that decomposes a time series into its underlying components: trend, seasonality, and residuals. By separating these components, the forecast can capture the long-term trend and seasonal fluctuations in the material value stream demand.
+
+By employing these techniques, the project aims to provide a reliable and accurate forecast of the material value stream demand for the next two years. This forecast will assist in making informed decisions related to inventory management, production planning, and resource allocation, ultimately optimizing operations and meeting customer demands more effectively. Python will serve as the programming language for implementing the ARIMA and STL decomposition models and generating the forecast.
